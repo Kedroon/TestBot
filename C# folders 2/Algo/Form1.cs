@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Data.OleDb;
 using System.IO;
 
-namespace TestAlgorithm
+namespace AlgorithmTest
 {
     public partial class Form1 : Form
     {
@@ -22,15 +22,19 @@ namespace TestAlgorithm
         string pesagem = "";
         int pesagemqnt = 0;
 
+        string invoiceprice = "";
         string invoice = "";
         int invoiceqnt = 0;
+
+        string handling = "";
+        int handlingqnt = 0;
 
         string query;
 
         public Form1()
         {
             InitializeComponent();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
 Persist Security Info=False;";
         }
 
@@ -52,6 +56,7 @@ Persist Security Info=False;";
                 findArmazenagem1periodo(discriminacao);
                 findPesagem(discriminacao);
                 findInvoice(discriminacao);
+                findHandling(discriminacao);
                 inserirNoBancoSuperTerminais(nfe);
             }
             connection.Close();
@@ -64,7 +69,7 @@ Persist Security Info=False;";
             // connection.Open();
             OleDbCommand command = new OleDbCommand();
             command.Connection = connection;
-            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE , INVOICEQNT) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "'," + invoiceqnt + ")";
+            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE , INVOICEQNT, HANDLING , HANDLINGQNT) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "'," + invoiceqnt + ",'" + handling + "'," + handlingqnt + ")";
             command.CommandText = query;
             command.ExecuteNonQuery();
             //  connection.Close();
@@ -88,7 +93,8 @@ Persist Security Info=False;";
                 Console.WriteLine(armazenagem1periodo);
                 Console.WriteLine(armazenagem1periodoqnt);
             }
-            else {
+            else
+            {
                 armazenagem1periodo = "";
                 armazenagem1periodoqnt = 0;
             }
@@ -111,7 +117,8 @@ Persist Security Info=False;";
                 Console.WriteLine(pesagem);
                 Console.WriteLine(pesagemqnt);
             }
-            else {
+            else
+            {
                 pesagem = "";
                 pesagemqnt = 0;
             }
@@ -127,17 +134,46 @@ Persist Security Info=False;";
                 int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
                 indexEnd += indexbegin - 1;
                 int indexmoney = discriminacao.Substring(indexbegin).IndexOf("$");
+                int indexinvoice = discriminacao.Substring(indexbegin).IndexOf(":");
+                int indexpara = discriminacao.Substring(indexbegin).IndexOf("(");
+                invoice = discriminacao.Substring(indexinvoice + 1, indexpara - indexinvoice);
+                MessageBox.Show(invoice);
                 indexbegin += indexmoney + 1;
                 Console.WriteLine(indexbegin);
                 Console.WriteLine(indexEnd);
-                invoice = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                invoiceprice = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
                 invoiceqnt = int.Parse(discriminacao.Substring(indexbegin - 6, 1));
-                Console.WriteLine(invoice);
+                Console.WriteLine(invoiceprice);
                 Console.WriteLine(invoiceqnt);
             }
-            else {
+            else
+            {
                 invoice = "";
+                invoiceprice = "";
                 invoiceqnt = 0;
+            }
+        }
+        private void findHandling(string discriminacao)
+        {
+            int indexbegin = discriminacao.IndexOf("HANDLING");
+            Console.WriteLine(indexbegin + "HANDLING");
+            if (indexbegin != -1)
+            {
+                int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
+                indexEnd += indexbegin - 1;
+                int indexmoney = discriminacao.Substring(indexbegin).IndexOf("$");
+                indexbegin += indexmoney + 1;
+                Console.WriteLine(indexbegin);
+                Console.WriteLine(indexEnd);
+                handling = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                handlingqnt = int.Parse(discriminacao.Substring(indexbegin - 6, 1));
+                Console.WriteLine(handling);
+                Console.WriteLine(handlingqnt);
+            }
+            else
+            {
+                handling = "";
+                handlingqnt = 0;
             }
         }
 
