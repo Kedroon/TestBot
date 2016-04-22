@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Data.OleDb;
 using System.IO;
 
-namespace TestAlgorithm
+namespace AlgorithmTest
 {
     public partial class Form1 : Form
     {
@@ -44,7 +44,7 @@ namespace TestAlgorithm
         public Form1()
         {
             InitializeComponent();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
 Persist Security Info=False;";
         }
 
@@ -57,7 +57,6 @@ Persist Security Info=False;";
             command.Connection = connection;
             query = "select NFe, DiscriminacaodoServico from Notas";
             command.CommandText = query;
-            MessageBox.Show("porra");
             OleDbDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -71,7 +70,7 @@ Persist Security Info=False;";
                 findInsnevasivacontainers(discriminacao);
                 findDIDOC(discriminacao);
                 findUtilizacaoservico(discriminacao);
-                //findBL(discriminacao);
+                findBL(discriminacao);
                 inserirNoBancoSuperTerminais(nfe);
             }
             connection.Close();
@@ -84,7 +83,7 @@ Persist Security Info=False;";
             // connection.Open();
             OleDbCommand command = new OleDbCommand();
             command.Connection = connection;
-            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE ,INVOICEPRICE, INVOICEQNT, HANDLING , HANDLINGQNT, INSNEVASIVACONTAINERS , INSNEVASIVACONTAINERSQNT, DIDOC , UTILIZACAODESERVICOS, UTILIZACAODESERVICOSQNT) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "','" + invoiceprice + "'," + invoiceqnt + ",'" + handling + "'," + handlingqnt + ",'" + insnevasivacontainers + "'," + insnevasivacontainersqnt + ",'" + DIDOC + "','" + utilizacaoservico + "'," + utilizacaoservicoqnt + ")";
+            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE ,INVOICEPRICE, INVOICEQNT, HANDLING , HANDLINGQNT, INSNEVASIVACONTAINERS , INSNEVASIVACONTAINERSQNT, DIDOC , UTILIZACAODESERVICOS, UTILIZACAODESERVICOSQNT, BL) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "','" + invoiceprice + "'," + invoiceqnt + ",'" + handling + "'," + handlingqnt + ",'" + insnevasivacontainers + "'," + insnevasivacontainersqnt + ",'" + DIDOC + "','" + utilizacaoservico + "'," + utilizacaoservicoqnt + ",'" + BL + "')";
             command.CommandText = query;
             command.ExecuteNonQuery();
             //  connection.Close();
@@ -261,7 +260,7 @@ Persist Security Info=False;";
             }
         }
 
-        /*private void findBL(string discriminacao)
+        private void findBL(string discriminacao)
         {
             int indexbegin = discriminacao.IndexOf("BL.:");
             Console.WriteLine(indexbegin);
@@ -273,16 +272,13 @@ Persist Security Info=False;";
                 Console.WriteLine(indexbegin);
                 Console.WriteLine(indexEnd);
                 BL = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
-                MessageBox.Show(BL);
                 Console.WriteLine(BL);
-
             }
             else
             {
                 BL = "";
-
             }
-        }*/
+        }
 
     }
 }
