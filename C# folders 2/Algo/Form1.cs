@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.Data.OleDb;
 using System.IO;
 
-namespace AlgorithmTest
+namespace TestAlgorithm
 {
     public partial class Form1 : Form
     {
@@ -29,12 +29,22 @@ namespace AlgorithmTest
         string handling = "";
         int handlingqnt = 0;
 
+        string insnevasivacontainers = "";
+        int insnevasivacontainersqnt = 0;
+
+        string DIDOC = "";
+
+        string utilizacaoservico = "";
+        int utilizacaoservicoqnt = 0;
+
+        string BL = "";
+
         string query;
 
         public Form1()
         {
             InitializeComponent();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
 Persist Security Info=False;";
         }
 
@@ -47,6 +57,7 @@ Persist Security Info=False;";
             command.Connection = connection;
             query = "select NFe, DiscriminacaodoServico from Notas";
             command.CommandText = query;
+            MessageBox.Show("porra");
             OleDbDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
@@ -57,6 +68,10 @@ Persist Security Info=False;";
                 findPesagem(discriminacao);
                 findInvoice(discriminacao);
                 findHandling(discriminacao);
+                findInsnevasivacontainers(discriminacao);
+                findDIDOC(discriminacao);
+                findUtilizacaoservico(discriminacao);
+                //findBL(discriminacao);
                 inserirNoBancoSuperTerminais(nfe);
             }
             connection.Close();
@@ -69,7 +84,7 @@ Persist Security Info=False;";
             // connection.Open();
             OleDbCommand command = new OleDbCommand();
             command.Connection = connection;
-            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE , INVOICEQNT, HANDLING , HANDLINGQNT) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "'," + invoiceqnt + ",'" + handling + "'," + handlingqnt + ")";
+            query = "insert into SuperTerminais (NFe , ARMAZENAGEM1 , ARMAZENAGEM1QNT , PESAGEM , PESAGEMQNT , INVOICE ,INVOICEPRICE, INVOICEQNT, HANDLING , HANDLINGQNT, INSNEVASIVACONTAINERS , INSNEVASIVACONTAINERSQNT, DIDOC , UTILIZACAODESERVICOS, UTILIZACAODESERVICOSQNT) values ('" + nfe + "','" + armazenagem1periodo + "'," + armazenagem1periodoqnt + ",'" + pesagem + "'," + pesagemqnt + ",'" + invoice + "','" + invoiceprice + "'," + invoiceqnt + ",'" + handling + "'," + handlingqnt + ",'" + insnevasivacontainers + "'," + insnevasivacontainersqnt + ",'" + DIDOC + "','" + utilizacaoservico + "'," + utilizacaoservicoqnt + ")";
             command.CommandText = query;
             command.ExecuteNonQuery();
             //  connection.Close();
@@ -134,10 +149,9 @@ Persist Security Info=False;";
                 int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
                 indexEnd += indexbegin - 1;
                 int indexmoney = discriminacao.Substring(indexbegin).IndexOf("$");
-                int indexinvoice = discriminacao.Substring(indexbegin).IndexOf(":");
-                int indexpara = discriminacao.Substring(indexbegin).IndexOf("(");
-                invoice = discriminacao.Substring(indexinvoice + 1, indexpara - indexinvoice);
-                MessageBox.Show(invoice);
+                int indexpara = discriminacao.Substring(indexbegin).IndexOf("(") - 1;
+                indexpara += indexbegin;
+                invoice = discriminacao.Substring(indexbegin + 10, indexpara - (indexbegin + 10));
                 indexbegin += indexmoney + 1;
                 Console.WriteLine(indexbegin);
                 Console.WriteLine(indexEnd);
@@ -156,7 +170,7 @@ Persist Security Info=False;";
         private void findHandling(string discriminacao)
         {
             int indexbegin = discriminacao.IndexOf("HANDLING");
-            Console.WriteLine(indexbegin + "HANDLING");
+            Console.WriteLine(indexbegin);
             if (indexbegin != -1)
             {
                 int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
@@ -176,6 +190,99 @@ Persist Security Info=False;";
                 handlingqnt = 0;
             }
         }
+
+        private void findInsnevasivacontainers(string discriminacao)
+        {
+            int indexbegin = discriminacao.IndexOf("INSPECAO NAO INVASIVA DE CONTAINERS");
+            Console.WriteLine(indexbegin);
+            if (indexbegin != -1)
+            {
+                int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
+                indexEnd += indexbegin - 1;
+                int indexmoney = discriminacao.Substring(indexbegin).IndexOf("$");
+                indexbegin += indexmoney + 1;
+                Console.WriteLine(indexbegin);
+                Console.WriteLine(indexEnd);
+                insnevasivacontainers = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                insnevasivacontainersqnt = int.Parse(discriminacao.Substring(indexbegin - 6, 1));
+                Console.WriteLine(insnevasivacontainers);
+                Console.WriteLine(insnevasivacontainersqnt);
+            }
+            else
+            {
+                insnevasivacontainers = "";
+                insnevasivacontainersqnt = 0;
+            }
+        }
+
+        private void findDIDOC(string discriminacao)
+        {
+            int indexbegin = discriminacao.IndexOf("DI/DOC.:");
+            Console.WriteLine(indexbegin);
+            if (indexbegin != -1)
+            {
+                int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
+                indexEnd += indexbegin;
+                indexbegin += 9;
+                Console.WriteLine(indexbegin);
+                Console.WriteLine(indexEnd);
+                DIDOC = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                Console.WriteLine(DIDOC);
+
+            }
+            else
+            {
+                DIDOC = "";
+
+            }
+        }
+
+        private void findUtilizacaoservico(string discriminacao)
+        {
+            int indexbegin = discriminacao.IndexOf("UTILIZACAO DE SERVICOS");
+            Console.WriteLine(indexbegin);
+            if (indexbegin != -1)
+            {
+                int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
+                indexEnd += indexbegin - 1;
+                int indexmoney = discriminacao.Substring(indexbegin).IndexOf("$");
+                indexbegin += indexmoney + 1;
+                Console.WriteLine(indexbegin);
+                Console.WriteLine(indexEnd);
+                utilizacaoservico = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                utilizacaoservicoqnt = int.Parse(discriminacao.Substring(indexbegin - 6, 1));
+                Console.WriteLine(utilizacaoservico);
+                Console.WriteLine(utilizacaoservicoqnt);
+            }
+            else
+            {
+                utilizacaoservico = "";
+                utilizacaoservicoqnt = 0;
+            }
+        }
+
+        /*private void findBL(string discriminacao)
+        {
+            int indexbegin = discriminacao.IndexOf("BL.:");
+            Console.WriteLine(indexbegin);
+            if (indexbegin != -1)
+            {
+                int indexEnd = discriminacao.Substring(indexbegin).IndexOf(";");
+                indexEnd += indexbegin;
+                indexbegin += 5;
+                Console.WriteLine(indexbegin);
+                Console.WriteLine(indexEnd);
+                BL = discriminacao.Substring(indexbegin, indexEnd - indexbegin);
+                MessageBox.Show(BL);
+                Console.WriteLine(BL);
+
+            }
+            else
+            {
+                BL = "";
+
+            }
+        }*/
 
     }
 }
