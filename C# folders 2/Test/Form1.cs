@@ -24,11 +24,13 @@ namespace TestBot
         private OleDbConnection connection = new OleDbConnection();
         string query;
         List<bool> cnpjcpfValidos = new List<bool>();
+        string excelpath = @"C:\TempExcel\rel_notas_aceite_" + DateTime.Now.ToString("MM") + "-" + DateTime.Now.ToString("yyyy") + ".xls";
+
         public Form1()
         {
 
             InitializeComponent();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
 Persist Security Info=False;";
         }
 
@@ -67,7 +69,7 @@ Persist Security Info=False;";
                 fox = new FirefoxDriver();
             }
 
-        Page1:
+            Page1:
 
             try
             {
@@ -116,7 +118,7 @@ Persist Security Info=False;";
                 Console.WriteLine(err.Message);
                 goto Page1;
             }
-        Page2:
+            Page2:
             try
             {
                 fox.SwitchTo().Frame(0);
@@ -129,7 +131,7 @@ Persist Security Info=False;";
                 goto Page2;
 
             }
-        Page3:
+            Page3:
             try
             {
                 fox.SwitchTo().DefaultContent();
@@ -149,7 +151,7 @@ Persist Security Info=False;";
             ReadOnlyCollection<IWebElement> element;
             string mwh;
             bool first = true;
-        Page4:
+            Page4:
 
             try
             {
@@ -157,6 +159,11 @@ Persist Security Info=False;";
                 fox.SwitchTo().Frame(2);
                 new SelectElement(fox.FindElement(By.Name("maxrow"))).SelectByText("500");
                 element = fox.FindElementsByXPath("//img[contains(@title,'Dados da nota fiscal')]");
+                if (File.Exists(excelpath))
+                {
+                    File.Delete(excelpath);
+                }
+                
                 fox.FindElementByXPath("//a[contains(text(),'GERAR ARQUIVO EXCEL')]").Click();
                 mwh = fox.CurrentWindowHandle;
 
@@ -168,7 +175,7 @@ Persist Security Info=False;";
                 goto Page4;
             }
             //Esperar o termino do download da planilha
-            string excelpath = @"C:\TempExcel\rel_notas_aceite_" + DateTime.Now.ToString("MM") + "-" + DateTime.Now.ToString("yyyy") + ".xls";
+            
             for (var i = 0; i < 30; i++)
             {
                 if (File.Exists(excelpath))
@@ -188,7 +195,7 @@ Persist Security Info=False;";
 
             ListOfCNPJCPF(); //Analisar planilha
             Thread.Sleep(2000);
-            File.Delete(excelpath);
+            
 
             foreach (var item in cnpjcpfValidos)
             {
@@ -202,7 +209,7 @@ Persist Security Info=False;";
             {
                 if (cnpjcpfValidos[count] == true)
                 {
-                LineCNPJ:
+                    LineCNPJ:
                     string cnpj = "";
                     string nfe = "";
                     string rps = "";
@@ -281,7 +288,8 @@ Persist Security Info=False;";
 
 
                     }
-                    else {
+                    else
+                    {
                         MessageBox.Show("WTF");
                     }
 
@@ -301,7 +309,7 @@ Persist Security Info=False;";
         {
 
             Excel.Application excelApp = new Excel.Application();
-            excelApp.Visible = true;
+            excelApp.Visible = false;
 
             string workbookPath = @"C:\TempExcel\rel_notas_aceite_04-2016.xls";
             Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(workbookPath,
@@ -337,5 +345,3 @@ Persist Security Info=False;";
 
 
 }
-
-
