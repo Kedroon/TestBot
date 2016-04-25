@@ -15,6 +15,7 @@ using System.Data.OleDb;
 using System.Threading;
 using System.Collections.ObjectModel;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Runtime.InteropServices;
 
 namespace BotPMM
 {
@@ -25,12 +26,12 @@ namespace BotPMM
         static string query;
         static List<bool> cnpjcpfValidos = new List<bool>();
         static string excelpath = @"C:\TempExcel\rel_notas_aceite_" + DateTime.Now.ToString("MM") + "-" + DateTime.Now.ToString("yyyy") + ".xls";
-       
+
 
         static void Main(string[] args)
         {
             connection = new OleDbConnection();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
 Persist Security Info=False;";
             automation();
 
@@ -38,17 +39,18 @@ Persist Security Info=False;";
         static private void clickVirtualButton(string num, FirefoxDriver fox)
         {
             fox.FindElementByXPath("//img[contains(@src,'/images/teclado/tec_" + num + ".gif')]").Click();
-            
+
         }
 
         static void automation()
         {
-
+            
+            Console.WriteLine("Iniciando Firefox");
             string pathToCurrentUserProfiles = Environment.ExpandEnvironmentVariables("%APPDATA%") + @"\Mozilla\Firefox\Profiles"; // Path to profile
             string[] pathsToProfiles = Directory.GetDirectories(pathToCurrentUserProfiles, "*.default*", SearchOption.TopDirectoryOnly);
             if (pathsToProfiles.Length != 0)
             {
-                Console.WriteLine("hi");
+                
                 FirefoxProfile profile = new FirefoxProfile(pathsToProfiles[0]);
                 profile.SetPreference("browser.tabs.loadInBackground", false); // set preferences you need
                 profile.SetPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream;application/csv;text/csv;application/vnd.ms-excel;");
@@ -56,15 +58,16 @@ Persist Security Info=False;";
                 profile.SetPreference("browser.download.folderList", 2);
                 profile.SetPreference("browser.download.dir", @"C:\TempExcel");
                 fox = new FirefoxDriver(new FirefoxBinary(), profile);
-
+                Console.WriteLine("Profile do firefox carregado com sucesso");
             }
             else
             {
                 fox = new FirefoxDriver();
+                Console.WriteLine("Profile do firefox nao encontrado");
             }
 
-            Page1:
-
+        Page1:
+            Console.WriteLine("Pagina 1");
             try
             {
 
@@ -92,10 +95,10 @@ Persist Security Info=False;";
                 catch (Exception err)
                 {
                     Console.WriteLine(err.Message);
-                    
+
                 }
-                
-                Thread.Sleep(5000);
+
+                Thread.Sleep(10000);
                 try
                 {
                     fox.SwitchTo().Alert().Accept();
@@ -105,9 +108,9 @@ Persist Security Info=False;";
                 {
 
                     Console.WriteLine(err.Message);
-                    
+
                 }
-                
+
                 Thread.Sleep(8000);
             }
             catch (Exception err)
@@ -115,7 +118,8 @@ Persist Security Info=False;";
                 Console.WriteLine(err.Message);
                 goto Page1;
             }
-            Page2:
+        Page2:
+            Console.WriteLine("Pagina 2");
             try
             {
                 fox.SwitchTo().Frame(0);
@@ -128,7 +132,8 @@ Persist Security Info=False;";
                 goto Page2;
 
             }
-            Page3:
+        Page3:
+            Console.WriteLine("Pagina 3");
             try
             {
                 fox.SwitchTo().DefaultContent();
@@ -148,8 +153,8 @@ Persist Security Info=False;";
             ReadOnlyCollection<IWebElement> element;
             string mwh;
             bool first = true;
-            Page4:
-
+        Page4:
+            Console.WriteLine("Pagina 4");
             try
             {
                 fox.SwitchTo().DefaultContent();
@@ -172,7 +177,7 @@ Persist Security Info=False;";
                 goto Page4;
             }
             //Esperar o termino do download da planilha
-
+            Console.WriteLine("Downloading Planilha");
             for (var i = 0; i < 30; i++)
             {
                 if (File.Exists(excelpath))
@@ -189,14 +194,15 @@ Persist Security Info=False;";
                 if (newLength == length && length != 0) { break; }
                 length = newLength;
             }
-
+            Console.WriteLine("Download concluido");
+            Console.WriteLine("Analisando planilha");
             ListOfCNPJCPF(); //Analisar planilha
             Thread.Sleep(2000);
-
+            Console.WriteLine("Analise concluida");
 
             foreach (var item in cnpjcpfValidos)
             {
-                Console.WriteLine(item.ToString());
+               // Console.WriteLine(item.ToString());
 
             }
             Console.WriteLine(cnpjcpfValidos.Count);
@@ -206,7 +212,7 @@ Persist Security Info=False;";
             {
                 if (cnpjcpfValidos[count] == true)
                 {
-                    LineCNPJ:
+                LineCNPJ:
                     string cnpj = "";
                     string nfe = "";
                     string rps = "";
@@ -218,11 +224,12 @@ Persist Security Info=False;";
                     item.Click();
                     ReadOnlyCollection<string> popups = fox.WindowHandles;
                     fox.SwitchTo().Window(popups[1]);
+                    Console.WriteLine(fox.Url);
                     try //Try CNPJ/CPF
                     {
                         FirefoxWebElement parentcnpj = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:129px;top:176px;')]");
                         cnpj = parentcnpj.FindElementByXPath(".//*").Text;
-                        Console.WriteLine(cnpj);
+                        Console.WriteLine("CNPJ/CPF: " + cnpj);
                     }
                     catch (Exception err)
                     {
@@ -238,7 +245,7 @@ Persist Security Info=False;";
                         {
                             FirefoxWebElement parentnfe = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:502px;top:52px;')]");
                             nfe = parentnfe.FindElementByXPath(".//*").Text;
-                            Console.WriteLine(nfe);
+                            Console.WriteLine("NFe: " + nfe);
                         }
                         catch (Exception)
                         {
@@ -247,11 +254,28 @@ Persist Security Info=False;";
 
                         }
 
+
+                        try //Try Discriminacao
+                        {
+                            FirefoxWebElement parentdis = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:12px;top:335px;')]");
+
+                            dis = parentdis.FindElementByXPath(".//*").Text;
+                            
+                            Console.WriteLine("Discriminacao: " + dis);
+                        }
+                        catch (Exception)
+                        {
+                            dis = "Não possui Discriminação do Serviço";
+                            Console.WriteLine("Não possui Discriminação");
+                        }
+
+                        
+
                         try //Try RPS
                         {
                             FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:124px;top:102px;')]");
                             rps = parentrps.FindElementByXPath(".//*").Text;
-                            Console.WriteLine(rps);
+                            Console.WriteLine("RPS: " + rps);
 
                         }
                         catch (Exception)
@@ -260,28 +284,26 @@ Persist Security Info=False;";
                             Console.WriteLine("Não possui RPS");
                         }
 
-
-                        try //Try Discriminacao
-                        {
-                            FirefoxWebElement parentdis = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:12px;top:335px;')]");
-
-                            dis = parentdis.FindElementByXPath(".//*").Text;
-                            Console.WriteLine(dis);
+                        if (cnpj == "04.335.535/0002-55") {
+                            SuperTerminais superterminais = new SuperTerminais(dis, nfe);
+                            if (superterminais.BeginAnalysis())
+                            {
+                                //insert no banco
+                                connection.Open();
+                                OleDbCommand command = new OleDbCommand();
+                                command.Connection = connection;
+                                query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "')";
+                                command.CommandText = query;
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                            else {
+                                Console.WriteLine("DI ZOADA");
+                            }
                         }
-                        catch (Exception)
-                        {
-                            dis = "Não possui Discriminação do Serviço";
-                            Console.WriteLine("Não possui Discriminação");
-                        }
+                            
 
-                        //insert no banco
-                        connection.Open();
-                        OleDbCommand command = new OleDbCommand();
-                        command.Connection = connection;
-                        query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "')";
-                        command.CommandText = query;
-                        command.ExecuteNonQuery();
-                        connection.Close();
+                        
 
 
                     }
@@ -298,7 +320,7 @@ Persist Security Info=False;";
                 count++;
                 Console.WriteLine(count);
             }
-
+            Console.ReadLine();
 
         }
 
@@ -306,10 +328,11 @@ Persist Security Info=False;";
         {
 
             Excel.Application excelApp = new Excel.Application();
-            excelApp.Visible = false;
+            excelApp.Visible = true;
 
             string workbookPath = @"C:\TempExcel\rel_notas_aceite_04-2016.xls";
-            Excel.Workbook excelWorkbook = excelApp.Workbooks.Open(workbookPath,
+            var workbooks = excelApp.Workbooks;
+            Excel.Workbook excelWorkbook = workbooks.Open(workbookPath,
                     0, false, 5, "", "", false, Excel.XlPlatform.xlWindows, "",
                     true, false, 0, true, false, false);
             Excel.Sheets excelSheets = excelWorkbook.Worksheets;
@@ -333,9 +356,13 @@ Persist Security Info=False;";
 
                 i++;
             }
+            Marshal.ReleaseComObject(excelWorksheet);
+            Marshal.ReleaseComObject(excelSheets);
+            Marshal.ReleaseComObject(excelWorkbook);
+            Marshal.ReleaseComObject(workbooks);
             excelApp.Quit();
+            
         }
     }
 
 }
-
