@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace AlgorithmTestConsole
 {
@@ -10,9 +7,13 @@ namespace AlgorithmTestConsole
     {
         static void Main(string[] args)
         {
-            SuperTerminais superterminais = new SuperTerminais();
+            //SuperTerminais superterminais = new SuperTerminais();
+            //AuroraEadi auroraeadi = new AuroraEadi();
+            Chibatao chibatao = new Chibatao();
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            superterminais.StartAnalysis();
+            chibatao.StartAnalysis();
+            //superterminais.StartAnalysis();
+            //auroraeadi.StartAnalysis();
             watch.Stop();
             Console.WriteLine("Execution Time: " + (watch.ElapsedMilliseconds) + "Ms");
             Console.Read();
