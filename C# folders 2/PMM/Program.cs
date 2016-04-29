@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
@@ -31,7 +25,7 @@ namespace BotPMM
         static void Main(string[] args)
         {
             connection = new OleDbConnection();
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
 Persist Security Info=False;";
             automation();
 
@@ -44,19 +38,25 @@ Persist Security Info=False;";
 
         static void automation()
         {
-            
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             Console.WriteLine("Iniciando Firefox");
             string pathToCurrentUserProfiles = Environment.ExpandEnvironmentVariables("%APPDATA%") + @"\Mozilla\Firefox\Profiles"; // Path to profile
             string[] pathsToProfiles = Directory.GetDirectories(pathToCurrentUserProfiles, "*.default*", SearchOption.TopDirectoryOnly);
             if (pathsToProfiles.Length != 0)
             {
-                
+
                 FirefoxProfile profile = new FirefoxProfile(pathsToProfiles[0]);
                 profile.SetPreference("browser.tabs.loadInBackground", false); // set preferences you need
                 profile.SetPreference("browser.helperApps.neverAsk.saveToDisk", "application/octet-stream;application/csv;text/csv;application/vnd.ms-excel;");
                 profile.SetPreference("browser.helperApps.alwaysAsk.force", false);
                 profile.SetPreference("browser.download.folderList", 2);
                 profile.SetPreference("browser.download.dir", @"C:\TempExcel");
+                profile.SetPreference("capability.policy.policynames", "strict");
+                profile.SetPreference("capability.policy.strict.sites", "http://www.netdating.dk");
+                profile.SetPreference("capability.policy.strict.Window.alert", "noAccess");
+                profile.SetPreference("capability.policy.strict.Window.confirm", "noAccess");
+                profile.SetPreference("capability.policy.strict.Window.prompt", "noAccess");
                 fox = new FirefoxDriver(new FirefoxBinary(), profile);
                 Console.WriteLine("Profile do firefox carregado com sucesso");
             }
@@ -66,7 +66,7 @@ Persist Security Info=False;";
                 Console.WriteLine("Profile do firefox nao encontrado");
             }
 
-        Page1:
+            Page1:
             Console.WriteLine("Pagina 1");
             try
             {
@@ -98,7 +98,7 @@ Persist Security Info=False;";
 
                 }
 
-                Thread.Sleep(10000);
+                Thread.Sleep(15000);
                 try
                 {
                     fox.SwitchTo().Alert().Accept();
@@ -118,13 +118,15 @@ Persist Security Info=False;";
                 Console.WriteLine(err.Message);
                 goto Page1;
             }
-        Page2:
+            Page2:
             Console.WriteLine("Pagina 2");
             try
             {
                 fox.SwitchTo().Frame(0);
                 fox.FindElement(By.Id("6")).Click();
             }
+            
+
             catch (Exception err)
             {
                 Console.WriteLine(err.Message);
@@ -132,7 +134,8 @@ Persist Security Info=False;";
                 goto Page2;
 
             }
-        Page3:
+    
+            Page3:
             Console.WriteLine("Pagina 3");
             try
             {
@@ -143,17 +146,19 @@ Persist Security Info=False;";
                 fox.FindElement(By.Name("ano")).SendKeys(time.Year.ToString());
                 fox.FindElement(By.LinkText("Notas Recebidas")).Click();
             }
+            
+
             catch (Exception err)
             {
                 Console.WriteLine(err.Message);
-                fox.Navigate().Refresh(); ;
+                fox.Navigate().Refresh(); 
                 goto Page3;
             }
             int count = 0;
             ReadOnlyCollection<IWebElement> element;
             string mwh;
             bool first = true;
-        Page4:
+            Page4:
             Console.WriteLine("Pagina 4");
             try
             {
@@ -170,6 +175,7 @@ Persist Security Info=False;";
                 mwh = fox.CurrentWindowHandle;
 
             }
+
             catch (Exception err)
             {
                 Console.WriteLine(err.Message);
@@ -197,12 +203,12 @@ Persist Security Info=False;";
             Console.WriteLine("Download concluido");
             Console.WriteLine("Analisando planilha");
             ListOfCNPJCPF(); //Analisar planilha
-            Thread.Sleep(2000);
+            Thread.Sleep(3000);
             Console.WriteLine("Analise concluida");
 
             foreach (var item in cnpjcpfValidos)
             {
-               // Console.WriteLine(item.ToString());
+                // Console.WriteLine(item.ToString());
 
             }
             Console.WriteLine(cnpjcpfValidos.Count);
@@ -212,11 +218,22 @@ Persist Security Info=False;";
             {
                 if (cnpjcpfValidos[count] == true)
                 {
-                LineCNPJ:
-                    string cnpj = "";
+                    LineCNPJ:
+                    string CNPJPrestador = "";
                     string nfe = "";
                     string rps = "";
                     string dis = "";
+                    string valorliquido = "";
+                    string valorservico = "";
+                    string ISSQNRetido = "";
+                    string CODServico = "";
+                    string NFeSub = "";
+                    string DataHoraEmissao = "";
+                    string Competencia = "";
+                    string CODVerificacao = "";
+                    string CNPJTomador = "";
+                    string CIA = "";
+
                     if (!first)
                     {
                         fox.SwitchTo().Frame(2);
@@ -225,21 +242,21 @@ Persist Security Info=False;";
                     ReadOnlyCollection<string> popups = fox.WindowHandles;
                     fox.SwitchTo().Window(popups[1]);
                     Console.WriteLine(fox.Url);
-                    try //Try CNPJ/CPF
+                    try //Try CNPJ/CPF Prestador
                     {
                         FirefoxWebElement parentcnpj = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:129px;top:176px;')]");
-                        cnpj = parentcnpj.FindElementByXPath(".//*").Text;
-                        Console.WriteLine("CNPJ/CPF: " + cnpj);
+                        CNPJPrestador = parentcnpj.FindElementByXPath(".//*").Text;
+                        Console.WriteLine("CNPJ/CPF Prestador: " + CNPJPrestador);
                     }
                     catch (Exception err)
                     {
                         Console.WriteLine(err.Message);
-                        Console.WriteLine("cade o CNPJ");
+                        Console.WriteLine("cade o CNPJ Prestador");
                         fox.Close();
                         fox.SwitchTo().Window(mwh);
                         goto LineCNPJ;
                     }
-                    if (cnpj == "04.335.535/0002-55")
+                    if (CNPJPrestador == "84.098.383/0001-72")
                     {
                         try //Try nota fiscal eletronica
                         {
@@ -260,7 +277,7 @@ Persist Security Info=False;";
                             FirefoxWebElement parentdis = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:12px;top:335px;')]");
 
                             dis = parentdis.FindElementByXPath(".//*").Text;
-                            
+
                             Console.WriteLine("Discriminacao: " + dis);
                         }
                         catch (Exception)
@@ -269,7 +286,6 @@ Persist Security Info=False;";
                             Console.WriteLine("Não possui Discriminação");
                         }
 
-                        
 
                         try //Try RPS
                         {
@@ -284,7 +300,127 @@ Persist Security Info=False;";
                             Console.WriteLine("Não possui RPS");
                         }
 
-                        if (cnpj == "04.335.535/0002-55") {
+                        try //Try Valor Liquido
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:135px;top:690px;')]");
+                            valorliquido = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("Valor liquido: " + valorliquido);
+
+                        }
+                        catch (Exception)
+                        {
+                            valorliquido = "Não possui valor liquido";
+                            Console.WriteLine("Não possui valor liquido");
+                        }
+
+                        try //Try Valor Servico
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:135px;top:570px;')]");
+                            valorservico = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("Valor Servico: " + valorservico);
+
+                        }
+                        catch (Exception)
+                        {
+                            valorservico = "Não possui valor do servico";
+                            Console.WriteLine("Não possui valor do servico");
+                        }
+
+                        try //Try ISSQN Retido
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:135px;top:670px;')]");
+                            ISSQNRetido = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("ISSQN Retido: " + ISSQNRetido);
+
+                        }
+                        catch (Exception)
+                        {
+                            ISSQNRetido = "Nao possui ISSQN Retido";
+                            Console.WriteLine("Não possui ISSQN Retido");
+                        }
+
+                        try //Try Codigo do Servico
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:12px;top:450px;')]");
+                            CODServico = parentrps.FindElementByXPath(".//*").Text;
+                            int indexEnd = CODServico.IndexOf("-");
+                            CODServico = CODServico.Substring(0, indexEnd - 1);
+                            Console.WriteLine("Codigo do Servico: " + CODServico);
+
+                        }
+                        catch (Exception)
+                        {
+                            CODServico = "Nao possui Codigo do Servico";
+                            Console.WriteLine("Não possui Codigo do Servico");
+                        }
+
+                        try //Try NFe Substituido
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:319px;top:102px;')]");
+                            NFeSub = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("NFe Substituido: " + NFeSub);
+
+                        }
+                        catch (Exception)
+                        {
+                            NFeSub = "Nao possui Nfe Substituido";
+                            Console.WriteLine("Não possui NFe Substituido");
+                        }
+
+                        try //Try Data e Hora
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:124px;top:82px;')]");
+                            DataHoraEmissao = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("Data e Hora de Emissao: " + DataHoraEmissao);
+
+                        }
+                        catch (Exception)
+                        {
+                            DataHoraEmissao = "Nao possui Data e Hora de Emissao";
+                            Console.WriteLine("Não possui Data e Hora de Emissao");
+                        }
+
+                        try //Try Competencia
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:319px;top:82px;')]");
+                            Competencia = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("Competencia: " + Competencia);
+
+                        }
+                        catch (Exception)
+                        {
+                            Competencia = "Nao possui Competencia";
+                            Console.WriteLine("Não possui Competencia");
+                        }
+
+                        try //Try Codigo de Verificação
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:470px;top:82px;')]");
+                            CODVerificacao = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("Codigo de Verificacao: " + CODVerificacao);
+
+                        }
+                        catch (Exception)
+                        {
+                            CODVerificacao = "Nao possui Codigo de Verificacao";
+                            Console.WriteLine("Não possui Codigo de Verificacao");
+                        }
+
+                        try //Try CNPJ do Tomador
+                        {
+                            FirefoxWebElement parentrps = (FirefoxWebElement)fox.FindElementByXPath("//span[starts-with(@style,'position:absolute;left:59px;top:264px;')]");
+                            CNPJTomador = parentrps.FindElementByXPath(".//*").Text;
+                            Console.WriteLine("CNPJ/CPF Tomador: " + CNPJTomador);
+
+                        }
+                        catch (Exception)
+                        {
+                            CNPJTomador = "Nao possui CNPJ Tomador";
+                            Console.WriteLine("Não possui CNPJ Tomador");
+                        }
+
+                        if (CNPJPrestador == "04.335.535/0002-55")  //Insert BD SuperTerminais Table
+                        {
                             SuperTerminais superterminais = new SuperTerminais(dis, nfe);
                             if (superterminais.BeginAnalysis())
                             {
@@ -292,20 +428,57 @@ Persist Security Info=False;";
                                 connection.Open();
                                 OleDbCommand command = new OleDbCommand();
                                 command.Connection = connection;
-                                query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "')";
+                                query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao , ValorLiquido , ValorServico , ISSQNRetino , CODServico , NFeSub , DataHoraEmissao , Competencia , CODVerificacao , CNPJPrestador , CNPJTomador) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "','" + valorliquido + "','" + valorservico + "','" + ISSQNRetido + "','" + CODServico + "','"+NFeSub +"','"+DataHoraEmissao+"','"+ Competencia + "','"+ CODVerificacao + "','"+CNPJPrestador+"','"+CNPJTomador+"')";
                                 command.CommandText = query;
                                 command.ExecuteNonQuery();
                                 connection.Close();
                             }
-                            else {
+                            else
+                            {
                                 Console.WriteLine("DI ZOADA");
                             }
                         }
-                            
 
-                        
+                        if (CNPJPrestador == "04.694.548/0001-30")  //Insert BD Aurora Table
+                        {
+
+                            AuroraEadi auroraeadi = new AuroraEadi(dis, nfe);
+                            if (auroraeadi.BeginAnalysis())
+                            {
+                                connection.Open();
+                                OleDbCommand command = new OleDbCommand();
+                                command.Connection = connection;
+                                query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao , ValorLiquido , ValorServico , ISSQNRetino , CODServico , NFeSub , DataHoraEmissao , Competencia , CODVerificacao , CNPJPrestador , CNPJTomador) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "','" + valorliquido + "','" + valorservico + "','" + ISSQNRetido + "','" + CODServico + "','" + NFeSub + "','" + DataHoraEmissao + "','" + Competencia + "','" + CODVerificacao + "','" + CNPJPrestador + "','" + CNPJTomador + "')";
+                                command.CommandText = query;
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Colocaram um navio no meio da avenida!");
+                            }
 
 
+                        }
+
+                        if (CNPJPrestador == "84.098.383/0001-72")  //Insert BD Chibatao Table
+                        {
+                            Chibatao chibatao = new Chibatao(dis, nfe);
+                            if (chibatao.BeginAnalysis())
+                            {
+                                connection.Open();
+                                OleDbCommand command = new OleDbCommand();
+                                command.Connection = connection;
+                                query = "insert into Notas (NFe, RPS , DiscriminacaodoServico , Numeracao , ValorLiquido , ValorServico , ISSQNRetino , CODServico , NFeSub , DataHoraEmissao , Competencia , CODVerificacao , CNPJPrestador , CNPJTomador) values ('" + nfe + "','" + rps + "','" + dis + "','" + count.ToString() + "','" + valorliquido + "','" + valorservico + "','" + ISSQNRetido + "','" + CODServico + "','" + NFeSub + "','" + DataHoraEmissao + "','" + Competencia + "','" + CODVerificacao + "','" + CNPJPrestador + "','" + CNPJTomador + "')";
+                                command.CommandText = query;
+                                command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Colocaram um navio no meio da avenida!");
+                            }
+                        }
                     }
                     else
                     {
@@ -320,6 +493,8 @@ Persist Security Info=False;";
                 count++;
                 Console.WriteLine(count);
             }
+            watch.Stop();
+            Console.WriteLine("Execution Time: " + (watch.ElapsedMilliseconds / 1000) / 60 + "Minutes");
             Console.ReadLine();
 
         }
@@ -343,7 +518,7 @@ Persist Security Info=False;";
             while (excelWorksheet.Cells[i, 11].Value != null)
             {
                 string cnpjcpf = excelWorksheet.Cells[i, 11].Value2.ToString();
-                if (cnpjcpf == "4335535000255")
+                if (cnpjcpf == "84098383000172")
                 {
                     cnpjcpfValidos.Add(true);
 
@@ -361,7 +536,7 @@ Persist Security Info=False;";
             Marshal.ReleaseComObject(excelWorkbook);
             Marshal.ReleaseComObject(workbooks);
             excelApp.Quit();
-            
+
         }
     }
 

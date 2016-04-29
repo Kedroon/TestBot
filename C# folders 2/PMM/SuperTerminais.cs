@@ -65,17 +65,18 @@ namespace BotPMM
                 inserirNoBancoSuperTerminais();
                 return true;
             }
-            else {
+            else
+            {
                 return false;
             }
-            
-            
-            
+
+
+
         }
 
         private void inserirNoBancoSuperTerminais()
         {
-            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\migue\OneDrive\Documentos\Notas.accdb;
+            connection.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=D:\Usuários\sb042182\Desktop\Notas.accdb;
 Persist Security Info=False;";
             connection.Open();
             OleDbCommand command = new OleDbCommand();
@@ -229,7 +230,8 @@ Persist Security Info=False;";
                 {
                     return true;
                 }
-                else {
+                else
+                {
                     return false;
                 }
 
@@ -240,25 +242,25 @@ Persist Security Info=False;";
                 return false;
 
             }
-            
+
         }
 
         private void findUtilizacaoservico()
         {
             int indexbegin = dis.IndexOf("UTILIZACAO DE SERVICOS");
-           // Console.WriteLine(indexbegin);
+            // Console.WriteLine(indexbegin);
             if (indexbegin != -1)
             {
                 int indexEnd = dis.Substring(indexbegin).IndexOf(";");
                 indexEnd += indexbegin - 1;
                 int indexmoney = dis.Substring(indexbegin).IndexOf("$");
                 indexbegin += indexmoney + 1;
-               // Console.WriteLine(indexbegin);
-               // Console.WriteLine(indexEnd);
+                // Console.WriteLine(indexbegin);
+                // Console.WriteLine(indexEnd);
                 utilizacaoservico = dis.Substring(indexbegin, indexEnd - indexbegin);
                 utilizacaoservicoqnt = int.Parse(dis.Substring(indexbegin - 6, 1));
                 Console.WriteLine("Servico: " + utilizacaoservico);
-               // Console.WriteLine(utilizacaoservicoqnt);
+                // Console.WriteLine(utilizacaoservicoqnt);
             }
             else
             {
@@ -279,7 +281,7 @@ Persist Security Info=False;";
                 //Console.WriteLine(indexbegin);
                 //Console.WriteLine(indexEnd);
                 BL = dis.Substring(indexbegin, indexEnd - indexbegin);
-                Console.WriteLine("BL: "+ BL);
+                Console.WriteLine("BL: " + BL);
             }
             else
             {
@@ -289,4 +291,3 @@ Persist Security Info=False;";
 
     }
 }
-
