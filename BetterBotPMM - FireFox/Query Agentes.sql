@@ -1,0 +1,7 @@
+﻿select REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'UPS SCS TRANSPORTES (BRASIL) S.A.' then Desconsolidacao else 0 end),'.',',') as UPS,
+REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'AGILITY DO BRASIL LOGISTICA INTERNACIONAL S.A.' then Desconsolidacao else 0 end),'.',',') as Agility,
+REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'EXPEDITORS INTERNATIONAL DO BRASIL LTDA' then Desconsolidacao else 0 end),'.',',') as Expeditors,
+REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'CAPITALLOG LOGISTICA LTD A' then Desconsolidacao else 0 end),'.',',') as Capital,
+REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'KUEHNE+NAGEL SERVIÇOS LOGISTICOS LTDA' then Desconsolidacao else 0 end),'.',',') as KN,
+REPLACE(SUM(case when Tipo = 'IMP' and year(CURRENT_TIMESTAMP) = year(Data) and MONTH(current_timestamp) = month(Data) and Agente = 'NIPPON EXPRESS DO BRASIL TRANSP INT LTDA' then Desconsolidacao else 0 end),'.',',') as Nippon
+from Agentes

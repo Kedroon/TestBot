@@ -1,0 +1,28 @@
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\BetterBotPMM.exe.config
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\BetterBotPMM.exe
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\BetterBotPMM.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\HtmlAgilityPack.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\Oracle.ManagedDataAccess.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\WebDriver.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\WebDriver.Support.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\HtmlAgilityPack.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\HtmlAgilityPack.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\WebDriver.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\bin\Release\WebDriver.Support.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\obj\Release\BetterBotPMM.exe
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\obj\Release\BetterBotPMM.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM\BetterBotPMM\obj\Release\BetterBotPMM.csprojResolveAssemblyReference.cache
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\BetterBotPMM.exe.config
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\obj\Release\BetterBotPMM.exe
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\obj\Release\BetterBotPMM.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\BetterBotPMM.exe
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\BetterBotPMM.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\HtmlAgilityPack.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\Oracle.ManagedDataAccess.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\WebDriver.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\WebDriver.Support.dll
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\HtmlAgilityPack.pdb
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\HtmlAgilityPack.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\WebDriver.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\bin\Release\WebDriver.Support.xml
+D:\Usuários\sb042182\Documents\Visual Studio 2015\Projects\BetterBotPMM - FireFox\BetterBotPMM\obj\Release\BetterBotPMM.csprojResolveAssemblyReference.cache
